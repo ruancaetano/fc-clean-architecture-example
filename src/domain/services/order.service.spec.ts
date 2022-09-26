@@ -1,7 +1,7 @@
-import { Customer } from "../entities/customer";
-import { Order } from "../entities/order";
+import { Customer } from "../entities/customer.entity";
+import { Order } from "../entities/order.entity";
 import { OrderItem } from "../entities/order-item";
-import { Product } from "../entities/product";
+import { Product } from "../entities/product.entity";
 import { OrderService } from "./order.service";
 import { ProductService } from "./product.service";
 

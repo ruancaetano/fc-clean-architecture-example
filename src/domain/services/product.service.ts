@@ -1,4 +1,4 @@
-import { Product } from "../entities/product";
+import { Product } from "../entities/product.entity";
 
 export class ProductService {
 
