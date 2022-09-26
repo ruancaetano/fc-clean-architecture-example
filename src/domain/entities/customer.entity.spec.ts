@@ -43,13 +43,13 @@ describe("Customer unit tests", () => {
     it("should activate customer", () => {
       const customer = new Customer("1", "Customer");
 
-      customer.Address = new Address(
+      customer.changeAddress(new Address(
         "Rua teste",
         10,
         "São Paulo",
         "São Paulo",
         "00000-000"
-      );
+      ));
 
       customer.activate();
       expect(customer.isActive()).toBeTruthy();
@@ -58,13 +58,13 @@ describe("Customer unit tests", () => {
     it("should activate customer", () => {
       const customer = new Customer("1", "Customer");
 
-      customer.Address = new Address(
+      customer.changeAddress(new Address(
         "Rua teste",
         10,
         "São Paulo",
         "São Paulo",
         "00000-000"
-      );
+      ));
 
       customer.activate();
       expect(customer.isActive()).toBeTruthy();

@@ -22,8 +22,16 @@ export class Customer {
     return this._name;
   }
 
+  get Address(): Address {
+    return this._address;
+  }
+
   get rewardPoints(): number {
     return this._rewardPoints;
+  }
+
+  get active(): boolean {
+    return this._active;
   }
 
   validate() {
@@ -34,13 +42,6 @@ export class Customer {
     if (this._name.length === 0) {
       throw new Error("Name is required");
     }
-  }
-
-  set Address(address: Address) {
-    if (this._active && !address) {
-      throw new Error("Address is mandatory to activate a customer!");
-    }
-    this._address = address;
   }
 
   isActive(): boolean {
@@ -56,6 +57,13 @@ export class Customer {
 
   deactivate() {
     this._active = false;
+  }
+
+  changeAddress(address: Address) {
+    if (this._active && !address) {
+      throw new Error("Address is mandatory to activate a customer!");
+    }
+    this._address = address;
   }
 
   changeName(name: string) {

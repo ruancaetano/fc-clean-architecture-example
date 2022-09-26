@@ -20,11 +20,6 @@ export class ProductRepository implements ProductRespositoryInterface {
     );
   }
 
-  async findByName(name: string): Promise<Product> {
-    await ProductModel.create;
-    throw new Error("Method not implemented.");
-  }
-
   async find(id: string): Promise<Product> {
     const foundProduct = await ProductModel.findOne({
       where: { id },
