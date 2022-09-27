@@ -1,5 +1,17 @@
+import { faker } from "@faker-js/faker";
+
 import { Address } from "./address";
 import { Customer } from "./customer.entity";
+
+const createAddressMock = () => {
+  return new Address(
+    faker.address.street(),
+    faker.datatype.number(),
+    faker.address.city(),
+    faker.address.state(),
+    faker.address.zipCode()
+  );
+};
 
 describe("Customer unit tests", () => {
   describe("Creation", () => {
@@ -43,13 +55,7 @@ describe("Customer unit tests", () => {
     it("should activate customer", () => {
       const customer = new Customer("1", "Customer");
 
-      customer.changeAddress(new Address(
-        "Rua teste",
-        10,
-        "São Paulo",
-        "São Paulo",
-        "00000-000"
-      ));
+      customer.changeAddress(createAddressMock());
 
       customer.activate();
       expect(customer.isActive()).toBeTruthy();
@@ -58,13 +64,7 @@ describe("Customer unit tests", () => {
     it("should activate customer", () => {
       const customer = new Customer("1", "Customer");
 
-      customer.changeAddress(new Address(
-        "Rua teste",
-        10,
-        "São Paulo",
-        "São Paulo",
-        "00000-000"
-      ));
+      customer.changeAddress(createAddressMock());
 
       customer.activate();
       expect(customer.isActive()).toBeTruthy();
