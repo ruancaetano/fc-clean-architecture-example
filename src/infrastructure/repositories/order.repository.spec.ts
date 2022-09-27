@@ -124,6 +124,49 @@ describe("Order repository unit tests", () => {
     expect(orderModel.toJSON()).toStrictEqual(mapOrderEntityToModel(order));
   });
 
+  it("should undo all persistence changes if any order update operation fails", async () => {
+    const customerRepository = new CustomerRepository();
+    const productRepository = new ProductRepository();
+    const orderRepository = new OrderRepository();
+
+    const customer = createCustomerMock();
+    await customerRepository.create(customer);
+
+    const product = createProductMock();
+    productRepository.create(product);
+
+    const orderItem = createOrderItemMock(product);
+    const order = createOrderMock(customer, [orderItem]);
+    await orderRepository.create(order);
+
+    let orderModel = await OrderModel.findOne({
+      where: {
+        id: order.id,
+      },
+      include: ["items"],
+    });
+
+    expect(orderModel.toJSON()).toStrictEqual(mapOrderEntityToModel(order));
+
+    order.updateOrderItems([orderItem, { id: "invalid order" } as OrderItem]);
+
+    await expect(() => {
+      return orderRepository.update(order);
+    }).rejects.toThrow("Update transaction failed");
+
+    orderModel = await OrderModel.findOne({
+      where: {
+        id: order.id,
+      },
+      include: ["items"],
+    });
+
+    // revert invalid order insertion to compare
+    order.updateOrderItems([orderItem]);
+
+    expect(orderModel.toJSON()).toStrictEqual(mapOrderEntityToModel(order));
+  });
+
   it("should update an order", async () => {
     const customerRepository = new CustomerRepository();
     const productRepository = new ProductRepository();

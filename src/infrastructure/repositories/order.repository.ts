@@ -28,36 +28,45 @@ export class OrderRepository implements OrderRespositoryInterface {
   }
 
   async update(entity: Order): Promise<void> {
-    const mappedOrderItems = entity.items.map((item) => {
-      return {
-        id: item.id,
-        product_id: item.productId,
-        quantity: item.quantity,
-        name: item.name,
-        price: item.price,
-        order_id: entity.id,
-      };
-    });
+    const transaction = await OrderModel.sequelize.transaction();
 
-    await Promise.all(
-      mappedOrderItems.map((item) => {
-        return OrderItemModel.upsert(item);
-      })
-    );
+    try {
+      const mappedOrderItems = entity.items.map((item) => {
+        return {
+          id: item.id,
+          product_id: item.productId,
+          quantity: item.quantity,
+          name: item.name,
+          price: item.price,
+          order_id: entity.id,
+        };
+      });
 
-    await OrderModel.update(
-      {
-        id: entity.id,
-        customer_id: entity.customerId,
-        total: entity.calculateTotal(),
-        items: mappedOrderItems,
-      },
-      {
-        where: {
+      await Promise.all(
+        mappedOrderItems.map((item) => {
+          return OrderItemModel.upsert(item);
+        })
+      );
+
+      await OrderModel.update(
+        {
           id: entity.id,
+          customer_id: entity.customerId,
+          total: entity.calculateTotal(),
+          items: mappedOrderItems,
         },
-      }
-    );
+        {
+          where: {
+            id: entity.id,
+          },
+        }
+      );
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error("Update transaction failed");
+    }
   }
 
   async find(id: string): Promise<Order> {
