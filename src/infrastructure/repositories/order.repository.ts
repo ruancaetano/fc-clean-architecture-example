@@ -44,7 +44,7 @@ export class OrderRepository implements OrderRespositoryInterface {
 
       await Promise.all(
         mappedOrderItems.map((item) => {
-          return OrderItemModel.upsert(item);
+          return OrderItemModel.upsert(item, { transaction });
         })
       );
 
@@ -59,6 +59,7 @@ export class OrderRepository implements OrderRespositoryInterface {
           where: {
             id: entity.id,
           },
+          transaction
         }
       );
 
