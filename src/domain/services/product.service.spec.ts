@@ -1,15 +1,36 @@
+import { faker } from "@faker-js/faker";
+
 import { Product } from "../entities/product.entity";
 import { ProductService } from "./product.service";
 
+const createProductMock = () => {
+  return new Product(
+    faker.datatype.uuid(),
+    faker.random.alpha(10),
+    faker.datatype.number()
+  );
+};
+
 describe("Product service unit tests", () => {
   it("should change the price of all products", () => {
-    const product1 = new Product("1", "Product 1", 10);
-    const product2 = new Product("2", "Product 2", 20);
+    const product1 = createProductMock();
+    const product2 = createProductMock();
     const products = [product1, product2];
 
-    ProductService.increasePrice(products, 100);
+    const percentage = faker.datatype.number({
+      min: 1,
+      max: 100,
+    });
 
-    expect(product1.price).toBe(20);
-    expect(product2.price).toBe(40);
+    const expectedProduct1Price =
+      product1.price + (product1.price * percentage / 100);
+
+    const expectedProduct2Price =
+      product2.price + (product2.price * percentage / 100);
+
+    ProductService.increasePrice(products, percentage);
+
+    expect(product1.price).toBe(expectedProduct1Price);
+    expect(product2.price).toBe(expectedProduct2Price);
   });
 });

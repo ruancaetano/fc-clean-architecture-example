@@ -1,7 +1,26 @@
 import { Sequelize } from "sequelize-typescript";
+
+import { faker } from "@faker-js/faker";
+
 import { Product } from "../../domain/entities/product.entity";
 import { ProductModel } from "../db/sequelize/models/product.model";
 import { ProductRepository } from "./product.repository";
+
+const createProductMock = () => {
+  return new Product(
+    faker.datatype.uuid(),
+    faker.random.alpha(10),
+    faker.datatype.number()
+  );
+};
+
+const mapProductEntityToModel = (product: Product): ProductModel => {
+  return {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+  } as ProductModel;
+};
 
 describe("Product repository unit tests", () => {
   let sequilize: Sequelize;
@@ -26,72 +45,69 @@ describe("Product repository unit tests", () => {
 
   it("should create a product model", async () => {
     const productRepository = new ProductRepository();
-    const product = new Product("1", "Product 1", 100);
 
-    await productRepository.create(product);
-
-    const productModel = await ProductModel.findOne({ where: { id: "1" } });
-
-    expect(productModel?.toJSON()).toStrictEqual({
-      id: "1",
-      name: "Product 1",
-      price: 100,
-    });
-  });
-
-  it("should update a product model", async () => {
-    const productRepository = new ProductRepository();
-    const product = new Product("1", "Product 1", 100);
-
-    await productRepository.create(product);
-
-    const productModel = await ProductModel.findOne({ where: { id: "1" } });
-
-    expect(productModel?.toJSON()).toStrictEqual({
-      id: "1",
-      name: "Product 1",
-      price: 100,
-    });
-
-    product.changeName("Product 1 edited");
-    product.changePrice(200);
-
-    await productRepository.update(product);
-
-    const updatedProductModel = await ProductModel.findOne({
-      where: { id: "1" },
-    });
-
-    expect(updatedProductModel?.toJSON()).toStrictEqual({
-      id: "1",
-      name: "Product 1 edited",
-      price: 200,
-    });
-  });
-
-  it("should find a product model", async () => {
-    const productRepository = new ProductRepository();
-    const product = new Product("1", "Product 1", 100);
+    const product = createProductMock();
 
     await productRepository.create(product);
 
     const productModel = await ProductModel.findOne({
-      where: { id: "1" },
+      where: { id: product.id },
     });
 
-    const foundProduct = await productRepository.find("1");
+    expect(productModel?.toJSON()).toStrictEqual(
+      mapProductEntityToModel(product)
+    );
+  });
 
-    expect(productModel?.toJSON()).toStrictEqual({
-      id: foundProduct.id,
-      name: foundProduct.name,
-      price: foundProduct.price,
+  it("should update a product model", async () => {
+    const productRepository = new ProductRepository();
+    const product = createProductMock();
+
+    await productRepository.create(product);
+
+    const productModel = await ProductModel.findOne({
+      where: { id: product.id },
     });
+
+    expect(productModel?.toJSON()).toStrictEqual(
+      mapProductEntityToModel(product)
+    );
+
+    product.changeName(faker.random.alpha(10));
+    product.changePrice(faker.datatype.number());
+
+    await productRepository.update(product);
+
+    const updatedProductModel = await ProductModel.findOne({
+      where: { id: product.id },
+    });
+
+    expect(updatedProductModel?.toJSON()).toStrictEqual(
+      mapProductEntityToModel(product)
+    );
+  });
+
+  it("should find a product model", async () => {
+    const productRepository = new ProductRepository();
+    const product = createProductMock();
+
+    await productRepository.create(product);
+
+    const productModel = await ProductModel.findOne({
+      where: { id: product.id },
+    });
+
+    const foundProduct = await productRepository.find(product.id);
+
+    expect(productModel?.toJSON()).toStrictEqual(
+      mapProductEntityToModel(product)
+    );
   });
 
   it("should find all products ", async () => {
     const productRepository = new ProductRepository();
-    const product1 = new Product("1", "Product 1", 100);
-    const product2 = new Product("2", "Product 2", 200);
+    const product1 = createProductMock();
+    const product2 = createProductMock();
     const products = [product1, product2];
 
     await productRepository.create(product1);
