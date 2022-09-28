@@ -1,9 +1,32 @@
+import { faker } from "@faker-js/faker";
+import { Address } from "../../entities/address";
+import { Customer } from "../../entities/customer.entity";
+import { CustomerAddressChangedEvent } from "../customer/customer-address-changed.event";
 import { CustomerCreatedEvent } from "../customer/customer-created.event";
+import { ConsoleLogWhenCustomerAddressChangedHandler } from "../customer/handlers/console-log-when-customer-address-changed.handler";
 import { FirstConsolelogWhenCustomerCreatedHandler } from "../customer/handlers/first-console-log-when-customer-created.handler";
 import { SecondConsolelogWhenCustomerCreatedHandler } from "../customer/handlers/second-console-log-when-customer-created.handler";
 import { SendEmailWhenProductIsCreatedHandler } from "../product/handlers/send-email-when-product-created.handler";
 import { ProductCreatedEvent } from "../product/product-created.event";
 import { EventDispatcher } from "./event-dispatcher";
+
+const createAddressMock = () => {
+  return new Address(
+    faker.address.street(),
+    faker.datatype.number(),
+    faker.address.city(),
+    faker.address.state(),
+    faker.address.zipCode()
+  );
+};
+
+const createCustomerMock = () => {
+  const customer = new Customer(faker.datatype.uuid(), faker.name.fullName());
+  const address = createAddressMock();
+  customer.changeAddress(address);
+
+  return customer;
+};
 
 describe("Domain events tests", () => {
   describe("Product Created Event", () => {
@@ -187,6 +210,77 @@ describe("Domain events tests", () => {
       expect(spySecondEventHandler).toBeCalledWith(customerCreatedEvent);
       expect(spyFirstEventHandler).toBeCalledTimes(1);
       expect(spySecondEventHandler).toBeCalledTimes(1);
+    });
+  });
+
+  describe("Customer Address Changed Event", () => {
+    it("should register changed address handlers", () => {
+      const eventDispatcher = new EventDispatcher();
+      const eventHandler = new ConsoleLogWhenCustomerAddressChangedHandler();
+
+      const eventName = "CustomerAddressChangedEvent";
+      eventDispatcher.register(eventName, eventHandler);
+
+      expect(eventDispatcher.handlers[eventName]).toBeDefined();
+      expect(eventDispatcher.handlers[eventName].length).toBe(1);
+      expect(eventDispatcher.handlers[eventName]).toMatchObject([eventHandler]);
+    });
+
+    it("should unregister an event handler", () => {
+      const eventDispatcher = new EventDispatcher();
+      const eventHandler = new ConsoleLogWhenCustomerAddressChangedHandler();
+
+      const eventName = "CustomerAddressChangedEvent";
+      eventDispatcher.register(eventName, eventHandler);
+
+      expect(eventDispatcher.handlers[eventName]).toBeDefined();
+      expect(eventDispatcher.handlers[eventName].length).toBe(1);
+      expect(eventDispatcher.handlers[eventName]).toMatchObject([eventHandler]);
+
+      eventDispatcher.unregister(eventName, eventHandler);
+
+      expect(eventDispatcher.handlers[eventName].length).toBe(0);
+    });
+
+    it("should unregister all events", () => {
+      const eventDispatcher = new EventDispatcher();
+      const eventHandler = new ConsoleLogWhenCustomerAddressChangedHandler();
+
+      const eventName = "CustomerAddressChangedEvent";
+
+      eventDispatcher.register(eventName, eventHandler);
+
+      expect(eventDispatcher.handlers[eventName]).toBeDefined();
+      expect(eventDispatcher.handlers[eventName].length).toBe(1);
+      expect(eventDispatcher.handlers[eventName]).toMatchObject([eventHandler]);
+
+      eventDispatcher.unregisterAll();
+
+      expect(eventDispatcher.handlers.ProductCreatedEvent).not.toBeDefined();
+    });
+
+    it("should notify all events handlers", () => {
+      const eventDispatcher = new EventDispatcher();
+      const eventHandler = new ConsoleLogWhenCustomerAddressChangedHandler();
+
+      const spyEventHandler = jest.spyOn(eventHandler, "handle");
+
+      const eventName = "CustomerAddressChangedEvent";
+
+      eventDispatcher.register(eventName, eventHandler);
+
+      expect(eventDispatcher.handlers[eventName]).toBeDefined();
+      expect(eventDispatcher.handlers[eventName].length).toBe(1);
+      expect(eventDispatcher.handlers[eventName]).toMatchObject([eventHandler]);
+
+      const customerAddressChangedEvent = new CustomerAddressChangedEvent(
+        createCustomerMock()
+      );
+
+      eventDispatcher.notify(customerAddressChangedEvent);
+
+      expect(spyEventHandler).toBeCalledWith(customerAddressChangedEvent);
+      expect(spyEventHandler).toBeCalledTimes(1);
     });
   });
 });
