@@ -36,26 +36,7 @@ const MockRepository = () => {
     update: jest.fn(),
   };
 };
-describe("Find Customer use case", () => {
-  let sequilize: Sequelize;
-
-  beforeEach(async () => {
-    sequilize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      logging: false,
-      sync: {
-        force: true,
-      },
-    });
-
-    sequilize.addModels([CustomerModel]);
-    await sequilize.sync();
-  });
-
-  afterEach(async () => {
-    await sequilize.close();
-  });
+describe("Find Customer use case unit test", () => {
 
   it("should find a customer", async () => {
     const mockCustomerRespository = MockRepository();

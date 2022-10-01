@@ -25,7 +25,7 @@ const createCustomerMock = () => {
   return customer;
 };
 
-describe("Find Customer use case test integration", () => {
+describe("Find Customer use case integration test", () => {
   let sequilize: Sequelize;
 
   beforeEach(async () => {
