@@ -4,7 +4,9 @@
   "jsRules": {},
   "rules": {
     "variable-name": [false],
-    "no-console": [false]
+    "no-console": [false],
+    "max-classes-per-file": [false],
+    "no-empty-interface": [false]
   },
   "rulesDirectory": []
 }

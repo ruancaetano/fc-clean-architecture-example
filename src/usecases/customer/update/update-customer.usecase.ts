@@ -1,0 +1,43 @@
+import { Address } from "../../../domain/customer/entities/address";
+import { CustomerFactory } from "../../../domain/customer/factories/customer.factory";
+
+import { CustomerRespositoryInterface } from "../../../domain/customer/repositories/customer.repository";
+import {
+  InputUpdateCustomerDto,
+  OutputUpdateCustomerDto,
+} from "./update-customer.usecase.dto";
+
+export class UpdateCustomerUseCase {
+  constructor(private readonly repository: CustomerRespositoryInterface) {}
+
+  async execute(
+    input: InputUpdateCustomerDto
+  ): Promise<OutputUpdateCustomerDto> {
+    const customer = await this.repository.find(input.id);
+
+    customer.changeName(input.name);
+    customer.changeAddress(
+      new Address(
+        input.address.street,
+        input.address.number,
+        input.address.city,
+        input.address.state,
+        input.address.zipcode
+      )
+    );
+
+    await this.repository.update(customer);
+
+    return {
+      id: customer.id,
+      name: customer.name,
+      address: {
+        street: customer.Address.street,
+        number: customer.Address.number,
+        city: customer.Address.city,
+        state: customer.Address.state,
+        zipcode: customer.Address.zipcode,
+      },
+    };
+  }
+}

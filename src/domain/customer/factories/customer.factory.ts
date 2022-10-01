@@ -3,7 +3,7 @@ import { Address } from "../entities/address";
 import { Customer } from "../entities/customer.entity";
 
 export class CustomerFactory {
-  static create(name: string, address?: Address): Customer {
+  static create(name: string): Customer {
     return new Customer(uuid(), name);
   }
 
