@@ -1,12 +1,6 @@
-# DDD patterns
+# Clean Architecture Example
 
-[![Lint and tests](https://github.com/ruancaetano/ddd-patterns/actions/workflows/check.yml/badge.svg)](https://github.com/ruancaetano/ddd-patterns/actions/workflows/check.yml)
+Clean Architecture example with Typescript
 
-This project is a study about Domain Drive Design (DDD) tactical design patterns. Here were explored concepts such:
+[![Lint and tests](https://github.com/ruancaetano/clean-architecture-example/actions/workflows/check.yml/badge.svg)](https://github.com/ruancaetano/clean-architecture-example/actions/workflows/check.yml)
 
-- Entities
-- Value objects
-- Aggregates
-- Repositories
-- Domain services
-- Domain events
