@@ -155,7 +155,6 @@ describe("Product e2e test", () => {
 
     it("should throw an error if product not exists", async () => {
       const getResponse = await request(app).get("/products/invalidId").send();
-      console.log(getResponse.error);
       expect(getResponse.status).toBe(404);
       expect(getResponse.body.message).toBe("Product not found");
     });

@@ -182,7 +182,6 @@ describe("Customer e2e test", () => {
 
     it("should throw an error if customer not exists", async () => {
       const getResponse = await request(app).get("/customers/invalidId").send();
-      console.log(getResponse.error);
       expect(getResponse.status).toBe(404);
       expect(getResponse.body.message).toBe("Customer not found");
     });
