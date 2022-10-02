@@ -5,9 +5,9 @@ import { ListCustomerUseCase } from "../../../usecases/customer/list/list-custom
 import { UpdateCustomerUseCase } from "../../../usecases/customer/update/update-customer.usecase";
 import { CustomerRepository } from "../../customer/repositories/sequelize/customer.repository";
 
-export const customerRoute = express.Router();
+export const customersRoute = express.Router();
 
-customerRoute.get("/", async (req: Request, res: Response) => {
+customersRoute.get("/", async (req: Request, res: Response) => {
   const customerRepository = new CustomerRepository();
   const usecase = new ListCustomerUseCase(customerRepository);
   try {
@@ -18,7 +18,7 @@ customerRoute.get("/", async (req: Request, res: Response) => {
   }
 });
 
-customerRoute.get("/:id", async (req: Request, res: Response) => {
+customersRoute.get("/:id", async (req: Request, res: Response) => {
   const customerRepository = new CustomerRepository();
   const usecase = new FindCustomerUseCase(customerRepository);
 
@@ -40,7 +40,7 @@ customerRoute.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-customerRoute.post("/", async (req: Request, res: Response) => {
+customersRoute.post("/", async (req: Request, res: Response) => {
   const customerRepository = new CustomerRepository();
   const usecase = new CreateCustomerUseCase(customerRepository);
 
@@ -59,11 +59,18 @@ customerRoute.post("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(customerDto);
     return res.status(201).json(output);
   } catch (err) {
-    return res.status(500).json(err);
+    const validationMessages = ["Name is required"];
+
+    const status = validationMessages.includes((err as Error).message)
+      ? 400
+      : 500;
+    return res.status(status).json({
+      message: (err as Error).message || "Internal Server Error",
+    });
   }
 });
 
-customerRoute.put("/", async (req: Request, res: Response) => {
+customersRoute.put("/", async (req: Request, res: Response) => {
   const customerRepository = new CustomerRepository();
   const usecase = new UpdateCustomerUseCase(customerRepository);
 
@@ -83,6 +90,13 @@ customerRoute.put("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(customerDto);
     return res.status(200).json(output);
   } catch (err) {
-    return res.status(500).json(err);
+    const validationMessages = ["Name is required"];
+
+    const status = validationMessages.includes((err as Error).message)
+      ? 400
+      : 500;
+    return res.status(status).json({
+      message: (err as Error).message || "Internal Server Error",
+    });
   }
 });

@@ -80,7 +80,8 @@ describe("Customer e2e test", () => {
           },
         });
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Name is required");
     });
   });
 
@@ -145,7 +146,8 @@ describe("Customer e2e test", () => {
         .put("/customers")
         .send(updatedCustomer);
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Name is required");
     });
   });
 
