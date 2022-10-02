@@ -928,6 +928,11 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
+"@types/jstoxml@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/jstoxml/-/jstoxml-2.0.2.tgz#7ccfe12412857cc541a737ae56ce2559bd9b8ef4"
+  integrity sha512-60VaXPlZbd7tEhloAkE2E0lg+QoWpnGusdy+2pGMGFFpdsyxm/1GKs0o/nLJJKWXci92cnq2utmqaV5L7Zjqxw==
+
 "@types/lodash@^4.14.175":
   version "4.14.186"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.186.tgz#862e5514dd7bd66ada6c70ee5fce844b06c8ee97"
@@ -2749,6 +2754,11 @@ json5@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
   integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
+
+jstoxml@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/jstoxml/-/jstoxml-3.2.5.tgz#6c3987405cd988b2266662f658be8274f05fb425"
+  integrity sha512-MxJI8rcCTAeYgxW9a61i/jfK9KjVKpqbStoAf4QADXJ9jTLbh9KMM9A0qxcIRxxkopr6Ba6Wm68pxA6zBZpe+Q==
 
 kleur@^3.0.3:
   version "3.0.3"

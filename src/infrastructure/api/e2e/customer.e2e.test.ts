@@ -239,5 +239,54 @@ describe("Customer e2e test", () => {
         }),
       });
     });
+
+    it("should list all customers retuning XML", async () => {
+      const mockCustomer1 = createCustomerMock();
+      const mockCustomer2 = createCustomerMock();
+
+      const createResponse1 = await request(app)
+        .post("/customers")
+        .send({
+          name: mockCustomer1.name,
+          address: {
+            street: mockCustomer1.Address.street,
+            number: mockCustomer1.Address.number,
+            city: mockCustomer1.Address.city,
+            state: mockCustomer1.Address.state,
+            zipcode: mockCustomer1.Address.zipcode,
+          },
+        });
+      const createResponse2 = await request(app)
+        .post("/customers")
+        .send({
+          name: mockCustomer2.name,
+          address: {
+            street: mockCustomer2.Address.street,
+            number: mockCustomer2.Address.number,
+            city: mockCustomer2.Address.city,
+            state: mockCustomer2.Address.state,
+            zipcode: mockCustomer2.Address.zipcode,
+          },
+        });
+
+      expect(createResponse1.status).toBe(201);
+      expect(createResponse2.status).toBe(201);
+
+      const listResponse = await request(app)
+        .get("/customers")
+        .set("Accept", "application/xml")
+        .send();
+
+      expect(listResponse.status).toBe(200);
+      expect(listResponse.text).toContain(
+        '<?xml version="1.0" encoding="UTF-8"?>'
+      );
+      expect(listResponse.text).toContain(
+        `<id>${createResponse1.body.id}</id>`
+      );
+      expect(listResponse.text).toContain(
+        `<id>${createResponse2.body.id}</id>`
+      );
+    });
   });
 });

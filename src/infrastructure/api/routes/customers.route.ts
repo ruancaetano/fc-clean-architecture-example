@@ -5,6 +5,7 @@ import { FindCustomerUseCase } from "../../../usecases/customer/find/find-custom
 import { ListCustomerUseCase } from "../../../usecases/customer/list/list-customer.usecase";
 import { UpdateCustomerUseCase } from "../../../usecases/customer/update/update-customer.usecase";
 import { CustomerRepository } from "../../customer/repositories/sequelize/customer.repository";
+import { ListCustomerPresenter } from "../presenters/list-customer.presenter";
 
 export const customersRoute = express.Router();
 
@@ -13,7 +14,13 @@ customersRoute.get("/", async (req: Request, res: Response) => {
   const usecase = new ListCustomerUseCase(customerRepository);
   try {
     const output = await usecase.execute(null);
-    return res.status(200).json(output);
+
+    res.format({
+      json: async () => res.status(200).send(output),
+      xml: async () =>
+        res.status(200).send(ListCustomerPresenter.toXML(output)),
+    });
+    return res
   } catch (err) {
     return res.status(500).json(err);
   }
