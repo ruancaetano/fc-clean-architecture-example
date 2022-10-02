@@ -49,7 +49,7 @@ describe("Product e2e test", () => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Name is required");
+      expect(response.body.message).toBe("product: Name is required");
     });
 
     it("should not create a product if price is less than 0", async () => {
@@ -61,7 +61,7 @@ describe("Product e2e test", () => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Price must be greater than zero");
+      expect(response.body.message).toBe("product: Price must be greater than zero");
     });
   });
 
@@ -107,7 +107,7 @@ describe("Product e2e test", () => {
       const response = await request(app).put("/products").send(updatedProduct);
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Name is required");
+      expect(response.body.message).toBe("product: Name is required");
     });
 
     it("should not update a product with price less than zero", async () => {
@@ -128,7 +128,7 @@ describe("Product e2e test", () => {
       const response = await request(app).put("/products").send(updatedProduct);
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Price must be greater than zero");
+      expect(response.body.message).toBe("product: Price must be greater than zero");
     });
   });
 

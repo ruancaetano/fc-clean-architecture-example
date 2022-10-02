@@ -1,21 +1,23 @@
+import { Entity } from "../../@shared/entities/entity.abstract";
+import { NotificationError } from "../../@shared/notifications/notification.error";
 import { Address } from "./address";
 
-export class Customer {
-  private _id: string;
+export class Customer extends Entity {
   private _name: string;
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
 
   constructor(id: string, name: string) {
+    super();
     this._id = id;
     this._name = name;
 
     this.validate();
-  }
 
-  get id(): string {
-    return this._id;
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.getErros());
+    }
   }
 
   get name(): string {
@@ -35,12 +37,18 @@ export class Customer {
   }
 
   validate() {
-    if (!this._id) {
-      throw new Error("Id is required");
+    if (!this.id) {
+      this.notification.addError({
+        message: "Id is required",
+        context: "customer",
+      });
     }
 
     if (!this._name) {
-      throw new Error("Name is required");
+      this.notification.addError({
+        message: "Name is required",
+        context: "customer",
+      });
     }
   }
 
@@ -50,7 +58,11 @@ export class Customer {
 
   activate() {
     if (!this._address) {
-      throw new Error("Address is mandatory to activate a customer!");
+      this.notification.addError({
+        message: "Address is mandatory to activate a customer!",
+        context: "customer",
+      });
+      throw new NotificationError(this.notification.getErros());
     }
     this._active = true;
   }
@@ -61,14 +73,22 @@ export class Customer {
 
   changeAddress(address: Address) {
     if (this._active && !address) {
-      throw new Error("Address is mandatory to activate a customer!");
+      this.notification.addError({
+        message: "Address is mandatory to activate a customer!",
+        context: "customer",
+      });
+      throw new NotificationError(this.notification.getErros());
     }
     this._address = address;
   }
 
   changeName(name: string) {
     if (!name) {
-      throw new Error("Name is required");
+      this.notification.addError({
+        message: "Name is required",
+        context: "customer",
+      });
+      throw new NotificationError(this.notification.getErros());
     }
     this._name = name;
   }

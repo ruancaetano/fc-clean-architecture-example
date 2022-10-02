@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { NotificationError } from "../../../domain/@shared/notifications/notification.error";
 import { CreateProductUseCase } from "../../../usecases/product/create/create-product.usecase";
 import { FindProductUseCase } from "../../../usecases/product/find/find-product.usecase";
 import { ListProductUseCase } from "../../../usecases/product/list/list-product.usecase";
@@ -53,14 +54,7 @@ productsRoute.post("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(productDto);
     return res.status(201).json(output);
   } catch (err) {
-    const validationMessages = [
-      "Name is required",
-      "Price must be greater than zero",
-    ];
-
-    const status = validationMessages.includes((err as Error).message)
-      ? 400
-      : 500;
+    const status = err instanceof NotificationError ? 400 : 500;
     return res.status(status).json({
       message: (err as Error).message || "Internal Server Error",
     });
@@ -81,14 +75,7 @@ productsRoute.put("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(productDto);
     return res.status(200).json(output);
   } catch (err) {
-    const validationMessages = [
-      "Name is required",
-      "Price must be greater than zero",
-    ];
-
-    const status = validationMessages.includes((err as Error).message)
-      ? 400
-      : 500;
+    const status = err instanceof NotificationError ? 400 : 500;
     return res.status(status).json({
       message: (err as Error).message || "Internal Server Error",
     });

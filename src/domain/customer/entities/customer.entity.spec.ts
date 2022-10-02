@@ -16,11 +16,15 @@ const createAddressMock = () => {
 describe("Customer unit tests", () => {
   describe("Creation", () => {
     it("should throw error when id is empty", () => {
-      expect(() => new Customer("", "John")).toThrowError("Id is required");
+      expect(() => new Customer("", "John")).toThrowError("customer: Id is required");
     });
 
     it("should throw error when name is empty", () => {
-      expect(() => new Customer("1", "")).toThrowError("Name is required");
+      expect(() => new Customer("1", "")).toThrowError("customer: Name is required");
+    });
+
+    it("should throw error when id and name are empty", () => {
+      expect(() => new Customer("", "")).toThrowError("customer: Id is required, customer Name is required");
     });
 
     it("should create user", () => {

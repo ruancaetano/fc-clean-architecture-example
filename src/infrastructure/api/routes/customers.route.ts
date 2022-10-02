@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { NotificationError } from "../../../domain/@shared/notifications/notification.error";
 import { CreateCustomerUseCase } from "../../../usecases/customer/create/create-customer.usecase";
 import { FindCustomerUseCase } from "../../../usecases/customer/find/find-customer.usecase";
 import { ListCustomerUseCase } from "../../../usecases/customer/list/list-customer.usecase";
@@ -36,7 +37,9 @@ customersRoute.get("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(500).json(err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 });
 
@@ -59,11 +62,7 @@ customersRoute.post("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(customerDto);
     return res.status(201).json(output);
   } catch (err) {
-    const validationMessages = ["Name is required"];
-
-    const status = validationMessages.includes((err as Error).message)
-      ? 400
-      : 500;
+    const status = err instanceof NotificationError ? 400 : 500;
     return res.status(status).json({
       message: (err as Error).message || "Internal Server Error",
     });
@@ -90,11 +89,7 @@ customersRoute.put("/", async (req: Request, res: Response) => {
     const output = await usecase.execute(customerDto);
     return res.status(200).json(output);
   } catch (err) {
-    const validationMessages = ["Name is required"];
-
-    const status = validationMessages.includes((err as Error).message)
-      ? 400
-      : 500;
+    const status = err instanceof NotificationError ? 400 : 500;
     return res.status(status).json({
       message: (err as Error).message || "Internal Server Error",
     });

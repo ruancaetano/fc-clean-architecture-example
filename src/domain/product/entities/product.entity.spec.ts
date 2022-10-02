@@ -14,6 +14,10 @@ describe("Product entity unit tests", () => {
       ).toThrowError("Name is required");
     });
 
+    it("should throw error when id and name are empty", () => {
+      expect(() => new Product("", "", 100)).toThrowError("product: Id is required, product: Name is required");
+    });
+
     it("should throw an error when price is less than zero", () => {
       expect(() =>
         new Product("1", "Product 1", -1)

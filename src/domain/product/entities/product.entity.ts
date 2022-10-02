@@ -1,16 +1,22 @@
+import { Entity } from "../../@shared/entities/entity.abstract";
+import { NotificationError } from "../../@shared/notifications/notification.error";
 import { ProductInterface } from "./product.interface";
 
-export class Product implements ProductInterface {
-  private _id: string;
+export class Product extends Entity implements ProductInterface {
   private _name: string;
   private _price: number;
 
   constructor(id: string, name: string, price: number) {
+    super();
     this._id = id;
     this._name = name;
     this._price = price;
 
     this.validate();
+
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.getErros());
+    }
   }
 
   get id(): string {
@@ -26,28 +32,45 @@ export class Product implements ProductInterface {
   }
 
   validate(): boolean {
-    if (this._id.length === 0) {
-      throw new Error("Id is required");
+    if (!this._id.length) {
+      this.notification.addError({
+        message: "Id is required",
+        context: "product",
+      });
     }
-    if (this._name.length === 0) {
-      throw new Error("Name is required");
+    if (!this._name.length) {
+      this.notification.addError({
+        message: "Name is required",
+        context: "product",
+      });
     }
     if (this._price < 0) {
-      throw new Error("Price must be greater than zero");
+      this.notification.addError({
+        message: "Price must be greater than zero",
+        context: "product",
+      });
     }
     return true;
   }
 
   changeName(name: string) {
     if (!name) {
-      throw new Error("Name is required");
+      this.notification.addError({
+        message: "Name is required",
+        context: "product",
+      });
+      throw new NotificationError(this.notification.getErros());
     }
     this._name = name;
   }
 
   changePrice(price: number) {
     if (price < 0) {
-      throw new Error("Price must be greater than zero");
+      this.notification.addError({
+        message: "Price must be greater than zero",
+        context: "product",
+      });
+      throw new NotificationError(this.notification.getErros());
     }
     this._price = price;
   }
